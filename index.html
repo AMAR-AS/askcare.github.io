@@ -3,141 +3,1598 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DEEBIKA @ DIVYA SARAVANAN</title>
+    <title>Ask Care - An unified Medi-Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300,400,600,700&family=Inter:wght@100..900&display=swap" rel="stylesheet">
     <style>
-        /* This is basic inline CSS for readability/demonstration */
-        body {
-            font-family: Arial, sans-serif;
+        * {
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
-            color: #333;
+            box-sizing: border-box;
         }
-        header {
-            background-color: #333;
-            color: white;
-            padding: 1em 0;
-            text-align: center;
+
+        :root {
+            --bg-primary: #000000;
+            --bg-secondary: #1c1c1e;
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.18);
+            --text-primary: #ffffff;
+            --text-secondary: #a1a1a6;
+            --accent-primary: #0a84ff;
+            --accent-secondary: #5e5ce6;
+            --shadow: rgba(0, 0, 0, 0.5);
+            --blur-amount: 40px;
+            --smooth-curve: cubic-bezier(0.37, 1.95, 0.66, 0.56);
         }
-        nav a {
-            color: white;
-            margin: 0 15px;
-            text-decoration: none;
+
+        [data-theme="light"] {
+            --bg-primary: #f2f2f7;
+            --bg-secondary: #ffffff;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(0, 0, 0, 0.08);
+            --text-primary: #000000;
+            --text-secondary: #3c3c43;
+            --accent-primary: #007aff;
+            --accent-secondary: #5856d6;
+            --shadow: rgba(0, 0, 0, 0.1);
         }
-        .container {
-            width: 80%;
-            margin: auto;
-            overflow: hidden;
-            padding: 20px 0;
+
+        body {
+            font-family: Oxanium, Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            transition: background 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        section {
-            padding: 40px 0;
-            margin-bottom: 20px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 30%, rgba(10, 132, 255, 0.15) 0%, transparent 50%), 
+                        radial-gradient(circle at 80% 70%, rgba(94, 92, 230, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 50% 50%, rgba(175, 82, 222, 0.1) 0%, transparent 50%);
+            animation: morphGradient 15s ease infinite;
+            pointer-events: none;
+            z-index: -1;
         }
-        h2 {
-            text-align: center;
-            color: #007bff;
-            margin-bottom: 30px;
+
+        @keyframes morphGradient {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(5px, -5px) scale(1.1); }
+            66% { transform: translate(-5px, 5px) scale(0.9); }
         }
-        .hero {
-            background-color: #e0f7fa;
-            text-align: center;
-            padding: 60px 20px;
+
+        .page {
+            display: none;
+            min-height: 100vh;
+            padding: 6rem 5% 2rem;
+            animation: pageSlideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .skill-list {
-            list-style: none;
-            padding: 0;
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes pageSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(30px) scale(0.98);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 0.5rem 5%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--blur-amount));
+            -webkit-backdrop-filter: blur(var(--blur-amount));
+            border-bottom: 0.5px solid var(--glass-border);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-content {
+            max-width: 1400px;
+            margin: 0 auto;
             display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
+            justify-content: space-between;
+            align-items: center;
+            height: 52px;
         }
-        .skill-list li {
-            background: #007bff;
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        .logo:hover {
+            opacity: 0.7;
+        }
+
+        .logo-image {
+            height: 40px;
+            margin-right: 0.5rem;
+            transition: transform 0.3s;
+        }
+
+        .logo:hover .logo-image {
+            transform: scale(1.05);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: color 0.3s, background 0.5s var(--smooth-curve), border 0.5s var(--smooth-curve), box-shadow 0.5s var(--smooth-curve);
+            position: relative;
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            background: transparent;
+            border: 0.5px solid transparent;
+        }
+
+        .nav-links a:hover {
+            opacity: 0.6;
+        }
+
+        .nav-links a.active {
+            background: var(--glass-bg);
+            border: 0.5px solid var(--glass-border);
+            backdrop-filter: blur(20px);
+            font-weight: 600;
+            color: var(--text-primary);
+            opacity: 1 !important;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-button {
+            width: 36px;
+            height: 36px;
+            background: var(--glass-bg);
+            border: 0.5px solid var(--glass-border);
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(20px);
+            margin-left: 1rem;
+        }
+
+        .nav-button:hover {
+            transform: scale(1.1);
+        }
+
+        .nav-button:active {
+            transform: scale(0.95);
+        }
+
+        .theme-toggle:hover {
+            background: var(--accent-primary);
+        }
+
+        .logout-btn {
+            color: #ff453a;
+            font-size: 1.2rem;
+        }
+
+        .logout-btn:hover {
+            background: #ff453a;
             color: white;
-            padding: 8px 15px;
-            margin: 5px;
-            border-radius: 5px;
+        }
+
+        .sos-btn {
+            background: #ff453a;
+            color: white;
+            font-weight: bold;
+            animation: pulse-sos 1.5s infinite;
+        }
+
+        .sos-btn:hover {
+            background: #ff453a;
+            transform: scale(1.2);
+            box-shadow: 0 0 15px rgba(255, 69, 58, 0.8);
+        }
+
+        @keyframes pulse-sos {
+            0% { box-shadow: 0 0 0 0 rgba(255, 69, 58, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 69, 58, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 69, 58, 0); }
+        }
+
+        .help-btn {
+            background: #ffd60a;
+            color: #1c1c1e;
             font-weight: bold;
         }
-        footer {
-            text-align: center;
-            padding: 20px 0;
-            background-color: #333;
+
+        .help-btn:hover {
+            background: #ffcd00;
+            color: #000000;
+        }
+
+        .dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .dashboard-header {
+            margin-bottom: 3rem;
+            animation: fadeSlideUp 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes fadeSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dashboard-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--blur-amount));
+            -webkit-backdrop-filter: blur(var(--blur-amount));
+            border: 0.5px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 60px var(--shadow);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .card:active {
+            transform: translateY(-4px) scale(0.98);
+        }
+
+        .card-icon {
+            font-size: 2.8rem;
+            margin-bottom: 1.2rem;
+            display: block;
+            animation: iconFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes iconFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .card:nth-child(2) .card-icon { animation-delay: 0.5s; }
+        .card:nth-child(3) .card-icon { animation-delay: 1s; }
+        .card:nth-child(4) .card-icon { animation-delay: 1.5s; }
+        .card:nth-child(5) .card-icon { animation-delay: 2s; }
+        .card:nth-child(6) .card-icon { animation-delay: 2.5s; }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-description {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .btn {
+            padding: 0.85rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:active::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-primary {
+            background: var(--accent-primary);
             color: white;
-            margin-top: 20px;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(10, 132, 255, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.96);
+        }
+
+        .btn-secondary {
+            background: var(--glass-bg);
+            color: var(--text-primary);
+            border: 0.5px solid var(--glass-border);
+        }
+
+        .btn-success {
+            background: #30d158;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #ff453a;
+            color: white;
+        }
+
+        .item-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .item {
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--blur-amount));
+            border: 0.5px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 1.8rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .item:hover {
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateX(8px);
+            box-shadow: 0 8px 32px var(--shadow);
+        }
+
+        .item-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.6rem;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+        }
+
+        .item-info p {
+            color: var(--text-secondary);
+            margin: 0.4rem 0;
+            font-size: 0.9rem;
+        }
+
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            backdrop-filter: blur(20px);
+        }
+
+        .status-active {
+            background: rgba(48, 209, 88, 0.2);
+            color: #30d158;
+            border: 0.5px solid #30d158;
+        }
+
+        .status-completed {
+            background: rgba(10, 132, 255, 0.2);
+            color: var(--accent-primary);
+            border: 0.5px solid var(--accent-primary);
+        }
+
+        .status-past {
+            background: rgba(142, 142, 147, 0.2);
+            color: var(--text-secondary);
+            border: 0.5px solid var(--text-secondary);
+        }
+
+        /* Glass Radio Group Styles */
+        .glass-radio-group {
+            --bg: rgba(255, 255, 255, 0.06);
+            --text: #e5e5e5;
+            display: flex;
+            position: relative;
+            background: var(--bg);
+            border-radius: 1rem;
+            backdrop-filter: blur(12px);
+            box-shadow:
+                inset 1px 1px 4px rgba(255, 255, 255, 0.2),
+                inset -1px -1px 6px rgba(0, 0, 0, 0.3),
+                0 4px 12px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            width: fit-content;
+        }
+
+        .glass-radio-group input {
+            display: none;
+        }
+
+        .glass-radio-group label {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 80px;
+            font-size: 14px;
+            padding: 0.8rem 1.6rem;
+            cursor: pointer;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            color: var(--text);
+            position: relative;
+            z-index: 2;
+            transition: color 0.3s ease-in-out;
+        }
+
+        .glass-radio-group label:hover {
+            color: white;
+        }
+
+        .glass-radio-group input:checked + label {
+            color: #fff;
+        }
+
+        .glass-glider {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: calc(100% / 3);
+            border-radius: 1rem;
+            z-index: 1;
+            transition:
+                transform 0.5s cubic-bezier(0.37, 1.95, 0.66, 0.56),
+                background 0.4s ease-in-out,
+                box-shadow 0.4s ease-in-out;
+        }
+
+        .glass-radio-group input:checked ~ .glass-glider {
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow:
+                inset 0 0 0 1px rgba(255, 255, 255, 0.2),
+                0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        #glass-active:checked ~ .glass-glider {
+            transform: translateX(0%);
+        }
+
+        #glass-past:checked ~ .glass-glider {
+            transform: translateX(100%);
+        }
+
+        #glass-medical:checked ~ .glass-glider {
+            transform: translateX(100%);
+        }
+
+        #glass-security:checked ~ .glass-glider {
+            transform: translateX(200%);
+        }
+
+        .glass-radio-group.light-mode {
+            --bg: rgba(255, 255, 255, 0.3);
+            --text: #333;
+        }
+
+        .glass-radio-group.light-mode input:checked + label {
+            color: #000;
+        }
+
+        /* Regular Tabs for compatibility */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            background: var(--glass-bg);
+            padding: 0.5rem;
+            border-radius: 16px;
+            backdrop-filter: blur(var(--blur-amount));
+            border: 0.5px solid var(--glass-border);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.9rem;
+            border-radius: 12px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .tab.active {
+            color: var(--text-primary);
+            background: var(--bg-secondary);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .tab:hover:not(.active) {
+            color: var(--text-primary);
+        }
+
+        .form-group {
+            margin-bottom: 1.3rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.6rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.9rem 1rem;
+            background: var(--glass-bg);
+            border: 0.5px solid var(--glass-border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(20px);
+        }
+
+        .form-group select {
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23a1a1a6'%3e%3cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 0.8em;
+            padding-right: 2.5rem;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 4px rgba(10, 132, 255, 0.1);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(20px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--blur-amount));
+            border: 0.5px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 2.5rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            animation: modalSlideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
+        }
+
+        @keyframes modalSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .close-modal {
+            float: right;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            line-height: 1;
+        }
+
+        .close-modal:hover {
+            color: #ff453a;
+            transform: rotate(90deg);
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 0.9rem 1rem;
+            background: var(--glass-bg);
+            border: 0.5px solid var(--glass-border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            backdrop-filter: blur(20px);
+        }
+
+        .doctor-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 0.5px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.3rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .doctor-card:hover {
+            border-color: var(--accent-primary);
+            transform: translateX(8px);
+            box-shadow: 0 8px 24px var(--shadow);
+        }
+
+        footer {
+            padding: 2rem 5%;
+            margin-top: 4rem;
+            border-top: 0.5px solid var(--glass-border);
+            text-align: center;
+            color: var(--text-secondary);
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--blur-amount));
+            -webkit-backdrop-filter: blur(var(--blur-amount));
+            font-size: 0.9rem;
+        }
+
+        footer p {
+            margin: 0.5rem 0;
+        }
+
+        .footer-links a {
+            color: var(--accent-primary);
+            text-decoration: none;
+            margin: 0 0.8rem;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--text-primary);
+        }
+
+        .placeholder-content {
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--blur-amount));
+            border: 0.5px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 3rem;
+            min-height: 50vh;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .video-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--blur-amount));
+            border: 0.5px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 2rem;
+            min-height: 600px;
+            animation: scaleIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .video-screen {
+            background: linear-gradient(135deg, #1c1c1e 0%, #2c2c2e 100%);
+            border-radius: 20px;
+            height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+            border: 0.5px solid var(--glass-border);
+        }
+
+        .video-placeholder {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            text-align: center;
+        }
+
+        .video-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1.2rem;
+        }
+
+        .control-btn {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: none;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--glass-bg);
+            color: var(--text-primary);
+            border: 0.5px solid var(--glass-border);
+            backdrop-filter: blur(20px);
+        }
+
+        .control-btn:hover {
+            transform: scale(1.15);
+            box-shadow: 0 8px 24px var(--shadow);
+        }
+
+        .control-btn:active {
+            transform: scale(0.9);
+        }
+
+        .control-btn.end-call {
+            background: #ff453a;
+            color: white;
+        }
+
+        .profile-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeSlideUp 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .profile-avatar {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+            color: white;
+            box-shadow: 0 12px 40px rgba(10, 132, 255, 0.4);
+            animation: avatarFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes avatarFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .qr-container {
+            text-align: center;
+            padding: 3rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--blur-amount));
+            border: 0.5px solid var(--glass-border);
+            border-radius: 28px;
+            max-width: 500px;
+            margin: 0 auto;
+            animation: scaleIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .qr-code {
+            width: 280px;
+            height: 280px;
+            background: white;
+            border-radius: 20px;
+            margin: 2rem auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @media (max-width: 1024px) {
+            .nav-links { gap: 0.5rem; }
+            .nav-links a { padding: 0.5rem 0.75rem; }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .nav-links a:not(.theme-toggle):not(.logout-btn):not(.sos-btn):not(.help-btn) { display: none; }
+            .item { flex-direction: column; align-items: flex-start; gap: 1rem; }
         }
     </style>
 </head>
 <body>
-
-    <header>
-        <div class="container">
-            <h1>DEEBIKA</h1>
-            <nav>
-                <a href="#about">About</a>
-                <a href="#skills">Skills</a>
-                <a href="#contact">Contact</a>
-            </nav>
+    <nav>
+        <div class="nav-content">
+            <div class="logo" onclick="showPageAndSetActiveLink('dashboard')">
+                <img src="ask.png" alt="Ask Care Logo" class="logo-image" style="filter: invert(1);">
+                <span>Ask Care</span>
+            </div>
+            <div class="nav-links">
+                <a onclick="showPageAndSetActiveLink('dashboard')">Dashboard</a>
+                <a onclick="showPageAndSetActiveLink('appointments')">Appointments</a>
+                <a onclick="showPageAndSetActiveLink('calendar')">Calendar</a>
+                <a onclick="showPageAndSetActiveLink('medical')">Medical</a>
+                <a onclick="showPageAndSetActiveLink('search')">Search</a>
+                <a onclick="showPageAndSetActiveLink('prescriptions')">Prescriptions</a>
+                <a onclick="showPageAndSetActiveLink('records')">Records</a>
+                <a onclick="showPageAndSetActiveLink('profile')">Profile</a>
+                <button class="nav-button sos-btn" onclick="openModal('sosModal')">🆘</button>
+                <button class="nav-button help-btn" onclick="openModal('helpCallModal')">❓</button>
+                <button class="nav-button theme-toggle" onclick="toggleTheme()"><span id="theme-icon">🌙</span></button>
+                <button class="nav-button logout-btn" onclick="logout()">🚪</button>
+            </div>
         </div>
-    </header>
+    </nav>
 
-    <section class="hero">
-        <div class="container">
-            <p></p>
-            <h2>Hello, I'm Deebika!</h2>
-            <h3>Teacher @ TN State Board</h3>
-            <p>I Tech and develop the student skill in the field of computer science with an excellence in the field aront 5+ years</p>
+    <div id="dashboard" class="page active">
+        <div class="dashboard">
+            <div class="dashboard-header">
+                <h1>Welcome back, John</h1>
+                <p style="color: var(--text-secondary)">Your health at your fingertips</p>
+            </div>
+            <div class="dashboard-grid">
+                <div class="card" onclick="showPageAndSetActiveLink('appointments')">
+                    <span class="card-icon">📅</span>
+                    <div class="card-title">Book Appointment</div>
+                    <div class="card-description">Schedule with top doctors</div>
+                </div>
+                <div class="card" onclick="showPageAndSetActiveLink('consultation')">
+                    <span class="card-icon">📞</span>
+                    <div class="card-title">Consultation</div>
+                    <div class="card-description">Connect via video call</div>
+                </div>
+                <div class="card" onclick="showPageAndSetActiveLink('prescriptions')">
+                    <span class="card-icon">💊</span>
+                    <div class="card-title">Prescriptions</div>
+                    <div class="card-description">View medications</div>
+                </div>
+                <div class="card" onclick="showPageAndSetActiveLink('records')">
+                    <span class="card-icon">📋</span>
+                    <div class="card-title">Medical Records</div>
+                    <div class="card-description">Access health history</div>
+                </div>
+                <div class="card" onclick="showPageAndSetActiveLink('qr')">
+                    <span class="card-icon">📱</span>
+                    <div class="card-title">Medical QR</div>
+                    <div class="card-description">Quick pharmacy access</div>
+                </div>
+                <div class="card" onclick="showPageAndSetActiveLink('profile')">
+                    <span class="card-icon">👤</span>
+                    <div class="card-title">Profile</div>
+                    <div class="card-description">Manage information</div>
+                </div>
+            </div>
         </div>
-    </section>
+    </div>
 
-    <hr>
-
-    <section id="about">
-        <div class="container">
-            <h2>🌍 About Me</h2>
-            <p style="text-align: center;">I am passionate about creating clean, efficient method of teaching code and love solving complex problems. With 6 years of experience, I'm guiding and training the future developers and tech leaders in their higher secodary and enjoy working with modern frameworks and teaching methodologies.</p>
+    <div id="calendar" class="page">
+        <div class="dashboard">
+            <div class="dashboard-header">
+                <h1>Health Calendar</h1>
+                <p style="color: var(--text-secondary)">View scheduled appointments and medication reminders.</p>
+            </div>
+            <div class="placeholder-content">
+                <div style="font-size: 3rem; margin-bottom: 1rem">📆</div>
+                <p style="margin-bottom: 1rem">Calendar View Placeholder</p>
+                <p style="font-size: 0.9rem">A detailed calendar grid/list for managing your health timeline would go here.</p>
+            </div>
         </div>
-    </section>
+    </div>
 
-    <hr>
-
-    <section id="skills">
-        <div class="container">
-            <h2>🛠️ Skills</h2>
-            <ul class="skill-list">
-                <li>HTML</li>
-                <li>CSS (Sass, Bootstrap)</li>
-                <li>JavaScript (ES6+)</li>
-                <li>React / Vue / Angular</li>
-                <li>Node.js / Python (Django)</li>
-                <li>Git / GitHub</li>
-                <li>Databases (SQL, MongoDB)</li>
-            </ul>
+    <div id="medical" class="page">
+        <div class="dashboard">
+            <div class="dashboard-header">
+                <h1>My Medical Details</h1>
+                <p style="color: var(--text-secondary)">Summary of key health metrics, insurance, and medical team.</p>
+            </div>
+            <div class="placeholder-content">
+                <div style="font-size: 3rem; margin-bottom: 1rem">⚕️</div>
+                <p style="margin-bottom: 1rem">Medical Summary Placeholder</p>
+                <p style="font-size: 0.9rem">This page would display dynamic summaries of vitals, insurance cards, and a list of primary care providers.</p>
+            </div>
         </div>
-    </section>
+    </div>
 
-    <hr>
-
-    <section id="contact">
-        <div class="container">
-            <h2>✉️ Get In Touch</h2>
-            <p style="text-align: center;">I'm currently looking for fresh minds wishing to be an aspiring techie. Feel free to connect!</p>
-            <p style="text-align: center;">
-                **Email:** <a href="mailto:ast@example.com">dd@ask.com</a> |
-                **LinkedIn:** <a href="[Your LinkedIn URL]" target="_blank">linkedin.com/in/dd</a> |
-                **GitHub:** <a href="[Your GitHub URL]" target="_blank">github.com/dd</a>
-            </p>
+    <div id="search" class="page">
+        <div class="dashboard">
+            <div class="dashboard-header">
+                <h1>Find Care Nearby</h1>
+                <p style="color: var(--text-secondary)">Search hospitals, doctors, or pharmacies near you.</p>
+            </div>
+            <input type="text" class="search-box" placeholder="Search for Cardiologist, City Hospital, or Pharmacy...">
+            <div style="margin-bottom: 1.5rem; display: flex; gap: 1.5rem; flex-wrap: wrap;">
+                <select style="flex: 1; min-width: 150px; padding: 0.75rem 1rem; background: var(--glass-bg); border: 0.5px solid var(--glass-border); border-radius: 12px; color: var(--text-primary); font-size: 0.9rem; appearance: none; -webkit-appearance: none; background-image: url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 20 20%22 fill=%22%23a1a1a6%22%3e%3cpath fill-rule=%22evenodd%22 d=%22M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z%22 clip-rule=%22evenodd%22/%3e%3c/svg%3e'); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 0.8em; padding-right: 2.5rem;">
+                    <option value="all">Filter by Type</option>
+                    <option value="doctor">Doctor</option>
+                    <option value="hospital">Hospital</option>
+                    <option value="pharmacy">Pharmacy</option>
+                </select>
+            </div>
+            <div class="item-list">
+                <div class="item">
+                    <div class="item-info">
+                        <h3>🏥 General Hospital</h3>
+                        <p>Hospital • 4.5 Stars</p>
+                        <p>2.5 km away • Downtown</p>
+                    </div>
+                    <button class="btn btn-primary" style="max-width: 100px">View Info</button>
+                </div>
+                <div class="item">
+                    <div class="item-info">
+                        <h3>🩺 Dr. Evelyn Reed</h3>
+                        <p>Dermatologist • 4.9 Stars</p>
+                        <p>0.8 km away • North City</p>
+                    </div>
+                    <button class="btn btn-primary" style="max-width: 100px">Book</button>
+                </div>
+                <div class="item">
+                    <div class="item-info">
+                        <h3>💊 Quick Pharmacy</h3>
+                        <p>Pharmacy • Open 24/7</p>
+                        <p>5.1 km away • South City</p>
+                    </div>
+                    <button class="btn btn-primary" style="max-width: 100px">Get Directions</button>
+                </div>
+            </div>
         </div>
-    </section>
+    </div>
+
+    <div id="appointments" class="page">
+        <div class="dashboard">
+            <div class="dashboard-header">
+                <h1>Appointments</h1>
+                <button class="btn btn-primary" style="max-width: 200px" onclick="openModal('bookModal')">📅 Book New</button>
+            </div>
+            <div class="item-list">
+                <div class="item">
+                    <div class="item-info">
+                        <h3>🩺 Dr. Sarah Johnson</h3>
+                        <p>Cardiologist</p>
+                        <p>Dec 15, 2025 at 10:00 AM</p>
+                        <p>Ask Care Hospital, Room 304</p>
+                    </div>
+                    <span class="status-badge status-active">Upcoming</span>
+                </div>
+                <div class="item">
+                    <div class="item-info">
+                        <h3>🩺 Dr. Michael Chen</h3>
+                        <p>General Physician</p>
+                        <p>Nov 20, 2025 at 2:30 PM</p>
+                        <p>Online Consultation</p>
+                    </div>
+                    <span class="status-badge status-completed">Completed</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="consultation" class="page">
+        <div class="video-container">
+            <h2 style="margin-bottom: 1.5rem; font-weight: 600;">Online Consultation</h2>
+            <div class="video-screen">
+                <div class="video-placeholder">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">📹</div>
+                    <p>Video consultation will start here</p>
+                    <p style="font-size: 0.9rem; margin-top: 1rem;">Dr. Sarah Johnson</p>
+                </div>
+            </div>
+            <div class="video-controls">
+                <button class="control-btn">🎤</button>
+                <button class="control-btn">📹</button>
+                <button class="control-btn end-call" onclick="showPageAndSetActiveLink('dashboard')">📞</button>
+                <button class="control-btn">💬</button>
+                <button class="control-btn">⚙️</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="prescriptions" class="page">
+        <div class="dashboard">
+            <div class="dashboard-header">
+                <h1>Prescriptions</h1>
+            </div>
+            
+            <!-- Glass Radio Group for Prescription Tabs -->
+            <div class="glass-radio-group">
+                <input type="radio" id="glass-active" name="prescription-tab" checked>
+                <label for="glass-active">Active</label>
+                
+                <input type="radio" id="glass-past" name="prescription-tab">
+                <label for="glass-past">Past</label>
+                
+                <div class="glass-glider"></div>
+            </div>
+
+            <div id="activePrescriptions" class="item-list" style="margin-top: 2rem;">
+                <div class="item">
+                    <div class="item-info">
+                        <h3>💊 Blood Pressure Medication</h3>
+                        <p>Dr. Sarah Johnson</p>
+                        <p>Amlodipine 5mg - Take once daily</p>
+                        <p>Nov 20, 2025 • Valid until Dec 20, 2025</p>
+                    </div>
+                    <div>
+                        <span class="status-badge status-active">Active</span>
+                        <button class="btn btn-success" style="margin-top: 1rem; max-width: 130px" onclick="markPrescriptionUsed(this)">✓ Mark Used</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="item-info">
+                        <h3>💊 Pain Relief</h3>
+                        <p>Dr. Michael Chen</p>
+                        <p>Ibuprofen 400mg - As needed</p>
+                        <p>Nov 18, 2025 • Valid until Dec 18, 2025</p>
+                    </div>
+                    <div>
+                        <span class="status-badge status-active">Active</span>
+                        <button class="btn btn-success" style="margin-top: 1rem; max-width: 130px" onclick="markPrescriptionUsed(this)">✓ Mark Used</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="pastPrescriptions" class="item-list" style="margin-top: 2rem; display: none;">
+                <div class="item">
+                    <div class="item-info">
+                        <h3>💊 Antibiotic Course</h3>
+                        <p>Dr. Emily Davis</p>
+                        <p>Amoxicillin 500mg - Completed</p>
+                        <p>Oct 15, 2025 • Used on Oct 16, 2025</p>
+                    </div>
+                    <span class="status-badge status-past">Used</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="records" class="page">
+        <div class="dashboard">
+            <div class="dashboard-header">
+                <h1>Medical Records</h1>
+                <button class="btn btn-primary" style="max-width: 200px" onclick="openModal('uploadModal')">📤 Upload Record</button>
+            </div>
+            <div class="item-list">
+                <div class="item">
+                    <div class="item-info">
+                        <h3>📄 Blood Test Results</h3>
+                        <p>Lab Report • Nov 20, 2025</p>
+                        <p>Ask Care Lab</p>
+                    </div>
+                    <button class="btn btn-secondary" style="max-width: 100px">View</button>
+                </div>
+                <div class="item">
+                    <div class="item-info">
+                        <h3>📷 X-Ray Chest</h3>
+                        <p>Radiology Report • Oct 28, 2025</p>
+                        <p>City Hospital</p>
+                    </div>
+                    <button class="btn btn-secondary" style="max-width: 100px">View</button>
+                </div>
+                <div class="item">
+                    <div class="item-info">
+                        <h3>📋 Annual Checkup</h3>
+                        <p>General Health Report • Sep 10, 2025</p>
+                        <p>Ask Care Hospital</p>
+                    </div>
+                    <button class="btn btn-secondary" style="max-width: 100px">View</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="qr" class="page">
+        <div class="qr-container">
+            <h2 style="margin-bottom: 1rem; font-weight: 600;">Medical QR Code</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 2rem;">Show this to pharmacies for prescription access</p>
+            <div class="qr-code">
+                <div style="text-align: center;">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">📱</div>
+                    <div style="font-size: 0.75rem; color: #666;">QR Code</div>
+                    <div style="font-size: 0.65rem; color: #999; margin-top: 0.5rem;">ID: AC-2025-JD-7894</div>
+                </div>
+            </div>
+            <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 2rem;">Used prescriptions automatically move to past records</p>
+            <button class="btn btn-primary" onclick="showPageAndSetActiveLink('dashboard')">Back to Dashboard</button>
+        </div>
+    </div>
+
+    <div id="profile" class="page">
+        <div class="profile-container">
+            <div class="profile-header">
+                <div class="profile-avatar">👤</div>
+                <h2 style="font-weight: 600;">John Doe</h2>
+                <p style="color: var(--text-secondary);">john.doe@email.com</p>
+            </div>
+
+            <!-- Glass Radio Group for Profile Tabs -->
+            <div class="glass-radio-group">
+                <input type="radio" id="glass-personal" name="profile-tab" checked>
+                <label for="glass-personal">Personal</label>
+                
+                <input type="radio" id="glass-medical" name="profile-tab">
+                <label for="glass-medical">Medical</label>
+                
+                <input type="radio" id="glass-security" name="profile-tab">
+                <label for="glass-security">Security</label>
+                
+                <div class="glass-glider"></div>
+            </div>
+
+            <div id="personalTab" class="tab-content active" style="margin-top: 2rem;">
+                <div class="card">
+                    <form>
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" value="John Doe">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" value="john.doe@email.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Phone</label>
+                            <input type="tel" value="+1 234 567 8900">
+                        </div>
+                        <div class="form-group">
+                            <label>Date of Birth</label>
+                            <input type="date" value="1990-05-15">
+                        </div>
+                        <div class="form-group">
+                            <label>Address</label>
+                            <textarea rows="3">123 Health Street, Medical City, MC 12345</textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary" onclick="event.preventDefault(); showNotification('Profile updated!')">Save Changes</button>
+                    </form>
+                </div>
+            </div>
+
+            <div id="medicalTab" class="tab-content" style="margin-top: 2rem; display: none;">
+                <div class="card">
+                    <form>
+                        <div class="form-group">
+                            <label>Blood Type</label>
+                            <select>
+                                <option>A</option>
+                                <option>A-</option>
+                                <option>B</option>
+                                <option>B-</option>
+                                <option>AB</option>
+                                <option>AB-</option>
+                                <option>O</option>
+                                <option>O-</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Height (cm)</label>
+                            <input type="number" value="175">
+                        </div>
+                        <div class="form-group">
+                            <label>Weight (kg)</label>
+                            <input type="number" value="70">
+                        </div>
+                        <div class="form-group">
+                            <label>Allergies</label>
+                            <textarea rows="3" placeholder="List any allergies...">Penicillin, Peanuts</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Chronic Conditions</label>
+                            <textarea rows="3" placeholder="List conditions...">Hypertension</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Emergency Contact</label>
+                            <input type="text" value="Jane Doe - +1 234 567 8901">
+                        </div>
+                        <button type="submit" class="btn btn-primary" onclick="event.preventDefault(); showNotification('Medical info updated!')">Save Changes</button>
+                    </form>
+                </div>
+            </div>
+
+            <div id="securityTab" class="tab-content" style="margin-top: 2rem; display: none;">
+                <div class="card">
+                    <form>
+                        <div class="form-group">
+                            <label>Current Password</label>
+                            <input type="password" placeholder="••••••••">
+                        </div>
+                        <div class="form-group">
+                            <label>New Password</label>
+                            <input type="password" placeholder="••••••••">
+                        </div>
+                        <div class="form-group">
+                            <label>Confirm New Password</label>
+                            <input type="password" placeholder="••••••••">
+                        </div>
+                        <button type="submit" class="btn btn-primary" onclick="event.preventDefault(); showNotification('Password updated!')">Update Password</button>
+                    </form>
+                    <hr style="margin: 2rem 0; border: 0.5px solid var(--glass-border);">
+                    <h3 style="margin-bottom: 1rem; font-weight: 600;">Two-Factor Authentication</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.9rem;">Add extra security to your account</p>
+                    <button class="btn btn-secondary">Enable 2FA</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="bookModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('bookModal')">&times;</span>
+            <h2 style="margin-bottom: 2rem; font-weight: 600;">Book Appointment</h2>
+            <input type="text" class="search-box" placeholder="Search doctors...">
+            <div class="doctor-card" onclick="selectDoctor(this)">
+                <h3 style="font-weight: 600;">Dr. Sarah Johnson</h3>
+                <p style="color: var(--text-secondary); font-size: 0.9rem;">Cardiologist • 15 years exp</p>
+                <p style="color: var(--text-secondary); margin-top: 0.4rem; font-size: 0.9rem;">4.9 ⭐ (250 reviews)</p>
+                <p style="color: var(--accent-primary); margin-top: 0.4rem; font-size: 0.9rem;">Available Today</p>
+            </div>
+            <div class="doctor-card" onclick="selectDoctor(this)">
+                <h3 style="font-weight: 600;">Dr. Michael Chen</h3>
+                <p style="color: var(--text-secondary); font-size: 0.9rem;">General Physician • 10 years exp</p>
+                <p style="color: var(--text-secondary); margin-top: 0.4rem; font-size: 0.9rem;">4.8 ⭐ (189 reviews)</p>
+                <p style="color: var(--accent-primary); margin-top: 0.4rem; font-size: 0.9rem;">Available Tomorrow</p>
+            </div>
+            <div class="doctor-card" onclick="selectDoctor(this)">
+                <h3 style="font-weight: 600;">Dr. Emily Davis</h3>
+                <p style="color: var(--text-secondary); font-size: 0.9rem;">Dermatologist • 12 years exp</p>
+                <p style="color: var(--text-secondary); margin-top: 0.4rem; font-size: 0.9rem;">4.9 ⭐ (310 reviews)</p>
+                <p style="color: var(--accent-primary); margin-top: 0.4rem; font-size: 0.9rem;">Available This Week</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="sosModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('sosModal')">&times;</span>
+            <h2 style="margin-bottom: 1.5rem; font-weight: 700; color: #ff453a;">🆘 Emergency Services Near You</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Immediate access to nearby critical healthcare locations.</p>
+            <div class="item-list">
+                <div class="item" style="border-color: #ff453a;">
+                    <div class="item-info">
+                        <h3>Closest Emergency Hospital</h3>
+                        <p>Central Trauma Center A&E</p>
+                        <p>1.2 km away • Estimated drive: 5 mins</p>
+                    </div>
+                    <button class="btn btn-danger" onclick="alert('Calling 911...')">Call Now</button>
+                </div>
+                <div class="item">
+                    <div class="item-info">
+                        <h3>24/7 Pharmacy</h3>
+                        <p>Meds-R-Us Pharmacy</p>
+                        <p>0.5 km away • Open 24 Hours</p>
+                    </div>
+                    <button class="btn btn-primary">Get Directions</button>
+                </div>
+                <div class="item">
+                    <div class="item-info">
+                        <h3>Urgent Care Clinic</h3>
+                        <p>City Quick Clinic</p>
+                        <p>3.1 km away • Wait Time: 15 mins</p>
+                    </div>
+                    <button class="btn btn-primary">View Info</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="helpCallModal" class="modal">
+        <div class="modal-content" style="text-align: center; padding: 3rem;">
+            <span class="close-modal" onclick="closeModal('helpCallModal')">&times;</span>
+            <div style="font-size: 5rem; margin-bottom: 1.5rem; color: #ffd60a;">❓</div>
+            <h2 style="margin-bottom: 1rem; font-weight: 700;">Urgent Common Help</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 2rem;">Connecting you to the first available doctor for general advice or quick assistance (e.g., minor symptom check, dosage query).</p>
+            <button class="btn btn-success" onclick="startCommonCall()">Start Help Call</button>
+            <p style="font-size: 0.8rem; color: #ff453a; margin-top: 1.5rem;">For severe emergencies, use the SOS button.</p>
+        </div>
+    </div>
+
+    <div id="uploadModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('uploadModal')">&times;</span>
+            <h2 style="margin-bottom: 2rem; font-weight: 600;">Upload Record</h2>
+            <form onsubmit="uploadRecord(event)">
+                <div class="form-group">
+                    <label>Record Title</label>
+                    <input type="text" placeholder="e.g., Blood Test Results" required>
+                </div>
+                <div class="form-group">
+                    <label>Record Type</label>
+                    <select required>
+                        <option>Lab Report</option>
+                        <option>X-Ray</option>
+                        <option>MRI Scan</option>
+                        <option>CT Scan</option>
+                        <option>Prescription</option>
+                        <option>Doctor's Note</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Date</label>
+                    <input type="date" required>
+                </div>
+                <div class="form-group">
+                    <label>Hospital/Clinic</label>
+                    <input type="text" placeholder="e.g., City Hospital" required>
+                </div>
+                <div class="form-group">
+                    <label>Upload File</label>
+                    <input type="file" accept=".pdf,.jpg,.jpeg,.png" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Upload</button>
+            </form>
+        </div>
+    </div>
 
     <footer>
-        <div class="container">
-            <p>&copy; 2025 AST. All rights reserved.</p>
+        <p>&copy; 2025 Ask Care. All rights reserved.</p>
+        <div class="footer-links">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+            <a href="#">Contact Us</a>
         </div>
     </footer>
 
+    <script>
+        let currentTheme = 'dark';
+
+        function showPageAndSetActiveLink(pageId) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('onclick').includes(pageId)) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        window.onload = function() {
+            showPageAndSetActiveLink('dashboard');
+
+            // Setup glass radio button functionality
+            document.querySelectorAll('input[type="radio"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.name === 'prescription-tab') {
+                        document.getElementById('activePrescriptions').style.display = this.id === 'glass-active' ? 'grid' : 'none';
+                        document.getElementById('pastPrescriptions').style.display = this.id === 'glass-past' ? 'grid' : 'none';
+                    }
+                    if (this.name === 'profile-tab') {
+                        document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+                        if (this.id === 'glass-personal') document.getElementById('personalTab').style.display = 'block';
+                        if (this.id === 'glass-medical') document.getElementById('medicalTab').style.display = 'block';
+                        if (this.id === 'glass-security') document.getElementById('securityTab').style.display = 'block';
+                    }
+                });
+            });
+        };
+
+        function toggleTheme() {
+            currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            document.getElementById('theme-icon').textContent = currentTheme === 'dark' ? '🌙' : '☀️';
+        }
+
+        function logout() {
+            showNotification('Logging out... Goodbye!');
+            setTimeout(() => {
+                window.location.href = '#login';
+            }, 1000);
+        }
+
+        function startCommonCall() {
+            closeModal('helpCallModal');
+            showNotification('Connecting to available doctor...');
+            setTimeout(() => {
+                alert('Connected to Dr. Smith for urgent common help.');
+                showPageAndSetActiveLink('consultation');
+            }, 2000);
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function selectDoctor(element) {
+            const doctorName = element.querySelector('h3').textContent;
+            document.getElementById('selectedDoctor').value = doctorName;
+            closeModal('bookModal');
+            // Here you'd proceed to time selection modal
+            showNotification('Doctor selected: ' + doctorName);
+        }
+
+        function uploadRecord(event) {
+            event.preventDefault();
+            closeModal('uploadModal');
+            showNotification('Record uploaded successfully!');
+            showPageAndSetActiveLink('records');
+        }
+
+        function markPrescriptionUsed(button) {
+            const item = button.closest('.item');
+            item.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+            item.style.opacity = '0';
+            item.style.transform = 'translateX(-30px)';
+            setTimeout(() => {
+                item.remove();
+                showNotification('Prescription moved to past records');
+            }, 500);
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed;
+                top: 80px;
+                right: 20px;
+                background: var(--glass-bg);
+                backdrop-filter: blur(40px);
+                border: 0.5px solid var(--glass-border);
+                padding: 1rem 1.5rem;
+                border-radius: 16px;
+                color: var(--text-primary);
+                font-weight: 500;
+                z-index: 3000;
+                animation: slideInRight 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+            `;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+                setTimeout(() => notification.remove(), 400);
+            }, 3000);
+
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideInRight {
+                    from { opacity: 0; transform: translateX(100px); }
+                    to { opacity: 1; transform: translateX(0); }
+                }
+                @keyframes slideOutRight {
+                    from { opacity: 1; transform: translateX(0); }
+                    to { opacity: 0; transform: translateX(100px); }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
+        };
+    </script>
 </body>
 </html>
